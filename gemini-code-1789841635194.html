@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>ocwikipidia</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #fff5f8;
+      color: #332228;
+      font-family: sans-serif;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid #f3d1df;
+    }
+    h1 {
+      color: #e64980;
+      border-bottom: 2px solid #e64980;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    .box {
+      background: #fff0f6;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+    }
+    button {
+      background: #e64980;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #f06595;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>ocwikipidia 위키</h1>
+    <p>환영합니다! 깃허브 페이지 연결 및 화면 출력이 정상적으로 성공했습니다.</p>
+    <div class="box">
+      <h3 style="margin-top:0;">등록된 자캐 목록</h3>
+      <p id="char-list-area">로딩 중...</p>
+      <button onclick="addSampleData()">테스트 자캐 추가하기</button>
+    </div>
+  </div>
+
+  <script>
+    function getList() {
+      try {
+        return JSON.parse(localStorage.getItem('oc_simple_list') || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function renderList() {
+      const list = getList();
+      const area = document.getElementById('char-list-area');
+      if (list.length === 0) {
+        area.innerHTML = '등록된 데이터가 없습니다. 아래 버튼을 눌러보세요!';
+      } else {
+        area.innerHTML = list.map(item => `<div>• <strong>${item.name}</strong> (${item.role})</div>`).join('');
+      }
+    }
+
+    function addSampleData() {
+      const list = getList();
+      list.push({ name: '루시엘', role: '근접 서포트 마법' });
+      localStorage.setItem('oc_simple_list', JSON.stringify(list));
+      renderList();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderList();
+    });
+  </script>
+
+</body>
+</html>
