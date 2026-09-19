@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>ocwikipidia - 자캐 위키</title>
+  <style>
+    :root {
+      --bg-color: #fff5f8;        
+      --card-bg: #ffffff;         
+      --text-main: #332228;       
+      --text-sub: #8c6a78;        
+      --border-color: #f3d1df;    
+      --pink-primary: #e64980;    
+      --pink-hover: #f06595;      
+      --pink-soft: #fff0f6;       
+      --table-header: #fae3ed;    
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 30px 16px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+    }
+
+    .wiki-container {
+      width: 100%;
+      max-width: 860px;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+
+    .wiki-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--pink-primary);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .wiki-topbar h1 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--text-main);
+    }
+    .wiki-actions button {
+      background: none;
+      border: 1px solid var(--border-color);
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+    .wiki-actions button:hover {
+      background: var(--pink-soft);
+      color: var(--pink-primary);
+    }
+
+    .wiki-doc-selector {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 24px;
+      background: var(--pink-soft);
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+    .wiki-doc-selector label {
+      font-size: 12px;
+      color: var(--pink-primary);
+      font-weight: 700;
+    }
+    .wiki-doc-selector select {
+      flex: 1;
+      min-width: 180px;
+      padding: 6px;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+
+    .panel-box {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(230, 73, 128, 0.08);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+    .form-row .form-group { flex: 1; }
+    label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      font-size: 13px;
+      background-color: #fff9fb;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    textarea { resize: vertical; height: 75px; }
+
+    .custom-field-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+    .custom-field-row input { flex: 1; }
+    .btn-remove-field {
+      background: #fae3ed;
+      color: var(--pink-primary);
+      border: none;
+      border-radius: 4px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .infobox-wrapper {
+      float: right;
+      width: 290px;
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 680px) {
+      .infobox-wrapper { float: none; width: 100%; margin-left: 0; }
+    }
+    .infobox {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      border: 2px solid var(--pink-primary);
+      background: #fff;
+    }
+    .infobox th[colspan="2"] {
+      background-color: var(--pink-primary);
+      color: #fff;
+      font-size: 15px;
+      padding: 8px;
+      text-align: center;
+    }
+    .infobox-image-cell td {
+      padding: 8px;
+      text-align: center;
+      background-color: #fff9fb;
+      border: 1px solid var(--border-color);
+    }
+    .infobox-image-cell img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .infobox th {
+      width: 35%;
+      background-color: var(--table-header);
+      padding: 7px 10px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+    .infobox td {
+      width: 65%;
+      padding: 7px 10px;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+    }
+
+    .toc {
+      background: #fff9fb;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: inline-block;
+      min-width: 200px;
+    }
+    .toc-title {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: var(--pink-primary);
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+    }
+    .toc ol { margin: 0; padding-left: 20px; font-size: 12px; line-height: 1.6; }
+    .toc a { color: var(--pink-primary); text-decoration: none; }
+
+    .wiki-h2 {
+      font-size: 17px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      clear: both;
+    }
+    .wiki-quote-box {
+      font-size: 13px;
+      font-style: italic;
+      background: var(--pink-soft);
+      border-left: 3px solid var(--pink-primary);
+      padding: 10px 14px;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 10px;
+    }
+    .wiki-content-box {
+      font-size: 13px;
+      line-height: 1.6;
+      background: #fff;
+      padding: 12px 14px;
+      border-radius: 4px;
+      border: 1px solid #f8e1ec;
+      white-space: pre-wrap;
+    }
+    .empty-wiki { text-align: center; padding: 40px; color: var(--text-sub); font-size: 13px; }
+    .clearfix::after { content: ""; clear: both; display: table; }
+    .btn-submit {
+      width: 100%;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      background-color: var(--pink-primary);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wiki-container">
+    <div class="wiki-topbar">
+      <h1>ocwikipidia</h1>
+      <div class="wiki-actions">
+        <button onclick="toggleEditPanel()">➕ 문서 작성/수정</button>
+      </div>
+    </div>
+
+    <div class="wiki-doc-selector">
+      <label>📄 문서 선택:</label>
+      <select id="doc-select" onchange="selectCharacterFromDropdown()"></select>
+    </div>
+
+    <div id="char-form-panel" class="panel-box" style="display: none; margin-bottom: 24px;">
+      <h3 style="margin: 0 0 12px 0; font-size: 14px; color: var(--pink-primary);">✍️ 자캐 위키 문서 편집기</h3>
+      <form id="char-form" onsubmit="handleCharSubmit(event)">
+        <input type="hidden" id="edit-id" value="">
+        <input type="hidden" id="char-image-data" value="">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>문서 제목 (자캐 이름)</label>
+            <input type="text" id="char-name" placeholder="예: 루시엘" required>
+          </div>
+          <div class="form-group">
+            <label>🖼️ 캐릭터 이미지 파일 첨부</label>
+            <input type="file" id="char-image-file" accept="image/*" onchange="handleImageFileChange(event)">
+          </div>
+        </div>
+
+        <div class="form-group" style="background:#fff9fb; padding:12px; border-radius:6px; border:1px solid var(--border-color); margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label style="margin:0; color:var(--pink-primary);">📋 인포박스 항목</label>
+            <button type="button" onclick="addCustomFieldRow('', '')" style="font-size:11px; padding:3px 8px; background:var(--pink-primary); color:#fff; border:none; border-radius:4px; cursor:pointer;">+ 항목 추가</button>
+          </div>
+          <div id="custom-fields-container"></div>
+        </div>
+
+        <div class="form-group"><label>1. 개요 - 캐릭터 한마디</label><input type="text" id="char-quote"></div>
+        <div class="form-group"><label>1. 개요 - 간단한 설명</label><textarea id="char-overview"></textarea></div>
+        <div class="form-group"><label>2. 상세</label><textarea id="char-details"></textarea></div>
+        <div class="form-group"><label>3. 백스토리</label><textarea id="char-backstory"></textarea></div>
+        <div class="form-group"><label>4. 관계</label><textarea id="char-relations"></textarea></div>
+        <div class="form-group"><label>5. 참고문서</label><textarea id="char-references"></textarea></div>
+
+        <div style="display: flex; gap: 8px; margin-top:16px;">
+          <button type="submit" class="btn-submit" style="flex:1;">저장하기</button>
+          <button type="button" onclick="toggleEditPanel()" style="padding:10px 16px; font-size:12px; background:#eee; border:none; border-radius:4px; cursor:pointer;">취소</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="wiki-body-area"></div>
+  </div>
+
+  <script>
+    let selectedCharId = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 샘플 데이터가 아예 없을 때 첫 접속용 샘플 하나 자동 추가 (선택사항)
+      if (getCharacters().length === 0) {
+        saveCharacters([{
+          id: Date.now(),
+          name: '루시엘',
+          image: '',
+          quote: '「돌아갈 곳은 처음부터 없었어.」',
+          customFields: [
+            { key: '종족', val: '하프엘프' },
+            { key: '전투 역할', val: '근접 서포트 마법' }
+          ],
+          overview: '반가워요! 우측 상단 편집기로 내용을 바꿀 수 있어요.',
+          details: '특징 및 전투 성향 등',
+          backstory: '과거 이야기',
+          relations: '관계 인물',
+          references: '시트 링크'
+        }]);
+      }
+      renderWikiDropdown();
+    });
+
+    function getCharacters() {
+      return JSON.parse(localStorage.getItem('oc_wiki_chars_v8') || '[]');
+    }
+
+    function saveCharacters(chars) {
+      localStorage.setItem('oc_wiki_chars_v8', JSON.stringify(chars));
+    }
+
+    function handleImageFileChange(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        document.getElementById('char-image-data').value = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addCustomFieldRow(key = '', val = '') {
+      const container = document.getElementById('custom-fields-container');
+      const div = document.createElement('div');
+      div.className = 'custom-field-row';
+      div.innerHTML = `
+        <input type="text" class="field-key" placeholder="항목 이름" value="${escapeHtml(key)}">
+        <input type="text" class="field-val" placeholder="내용" value="${escapeHtml(val)}">
+        <button type="button" class="btn-remove-field" onclick="this.parentElement.remove()">삭제</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function getCustomFieldsFromForm() {
+      const rows = document.querySelectorAll('.custom-field-row');
+      const fields = [];
+      rows.forEach(r => {
+        const k = r.querySelector('.field-key').value.trim();
+        const v = r.querySelector('.field-val').value.trim();
+        if (k || v) fields.push({ key: k || '항목', val: v || '-' });
+      });
+      return fields;
+    }
+
+    function toggleEditPanel() {
+      const panel = document.getElementById('char-form-panel');
+      const isHidden = panel.style.display === 'none';
+      panel.style.display = isHidden ? 'block' : 'none';
+      if (isHidden) {
+        document.getElementById('char-form').reset();
+        document.getElementById('edit-id').value = '';
+        document.getElementById('char-image-data').value = '';
+        const container = document.getElementById('custom-fields-container');
+        container.innerHTML = '';
+        addCustomFieldRow('종족', '하프엘프');
+      }
+    }
+
+    function handleCharSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-id').value;
+      const chars = getCharacters();
+      let imageData = document.getElementById('char-image-data').value.trim();
+      if (editId) {
+        const existing = chars.find(c => c.id == editId);
+        if (existing && !imageData) imageData = existing.image || '';
+      }
+      const payload = {
+        name: document.getElementById('char-name').value.trim(),
+        image: imageData,
+        quote: document.getElementById('char-quote').value.trim(),
+        customFields: getCustomFieldsFromForm(),
+        overview: document.getElementById('char-overview').value.trim() || '내용 없음',
+        details: document.getElementById('char-details').value.trim() || '내용 없음',
+        backstory: document.getElementById('char-backstory').value.trim() || '내용 없음',
+        relations: document.getElementById('char-relations').value.trim() || '내용 없음',
+        references: document.getElementById('char-references').value.trim() || '내용 없음'
+      };
+
+      if (editId) {
+        const idx = chars.findIndex(c => c.id == editId);
+        if (idx !== -1) chars[idx] = { id: Number(editId), ...payload };
+      } else {
+        chars.unshift({ id: Date.now(), ...payload });
+      }
+      saveCharacters(chars);
+      document.getElementById('char-form-panel').style.display = 'none';
+      renderWikiDropdown(chars[0]?.id);
+    }
+
+    function deleteCharacter(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      saveCharacters(getCharacters().filter(c => c.id !== id));
+      renderWikiDropdown();
+    }
+
+    function startEdit(id) {
+      const target = getCharacters().find(c => c.id == id);
+      if (!target) return;
+      document.getElementById('edit-id').value = target.id;
+      document.getElementById('char-name').value = target.name;
+      document.getElementById('char-image-data').value = target.image || '';
+      document.getElementById('char-quote').value = target.quote || '';
+      document.getElementById('char-overview').value = target.overview || '';
+      document.getElementById('char-details').value = target.details || '';
+      document.getElementById('char-backstory').value = target.backstory || '';
+      document.getElementById('char-relations').value = target.relations || '';
+      document.getElementById('char-references').value = target.references || '';
+      const container = document.getElementById('custom-fields-container');
+      container.innerHTML = '';
+      (target.customFields || []).forEach(item => addCustomFieldRow(item.key, item.val));
+      document.getElementById('char-form-panel').style.display = 'block';
+    }
+
+    function renderWikiDropdown(targetId = null) {
+      const chars = getCharacters();
+      const select = document.getElementById('doc-select');
+      if (chars.length === 0) {
+        select.innerHTML = `<option value="">등록된 문서 없음</option>`;
+        document.getElementById('wiki-body-area').innerHTML = `<div class="empty-wiki">문서가 없어요. 상단 버튼으로 추가해 보세요!</div>`;
+        return;
+      }
+      select.innerHTML = chars.map(c => `<option value="${c.id}" ${targetId == c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
+      const found = chars.find(c => c.id == (targetId || select.value)) || chars[0];
+      selectedCharId = found.id;
+      renderWikiPage(found);
+    }
+
+    function selectCharacterFromDropdown() {
+      const found = getCharacters().find(c => c.id == document.getElementById('doc-select').value);
+      if (found) { selectedCharId = found.id; renderWikiPage(found); }
+    }
+
+    function renderWikiPage(c) {
+      const area = document.getElementById('wiki-body-area');
+      const imageHtml = c.image ? `<tr class="infobox-image-cell"><td colspan="2"><img src="${c.image}"></td></tr>` : '';
+      const fieldsHtml = (c.customFields || []).map(f => `<tr><th>${escapeHtml(f.key)}</th><td>${escapeHtml(f.val)}</td></tr>`).join('');
+      const quoteHtml = c.quote ? `<div class="wiki-quote-box">${escapeHtml(c.quote)}</div>` : '';
+
+      area.innerHTML = `
+        <div style="display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 12px;">
+          <button onclick="startEdit(${c.id})" style="font-size:11px; padding:3px 8px; cursor:pointer;">[문서 편집]</button>
+          <button onclick="deleteCharacter(${c.id})" style="font-size:11px; padding:3px 8px; color:red; cursor:pointer;">[삭제]</button>
+        </div>
+        <div class="clearfix">
+          <div class="infobox-wrapper">
+            <table class="infobox">
+              <tr><th colspan="2">${escapeHtml(c.name)}</th></tr>
+              ${imageHtml}${fieldsHtml}
+            </table>
+          </div>
+          <div class="toc">
+            <div class="toc-title">목차</div>
+            <ol>
+              <li><a href="#sec-overview">개요</a></li>
+              <li><a href="#sec-details">상세</a></li>
+              <li><a href="#sec-backstory">백스토리</a></li>
+              <li><a href="#sec-relations">관계</a></li>
+              <li><a href="#sec-references">참고문서</a></li>
+            </ol>
+          </div>
+        </div>
+        <h2 id="sec-overview" class="wiki-h2">1. 개요</h2>${quoteHtml}<div class="wiki-content-box">${escapeHtml(c.overview)}</div>
+        <h2 id="sec-details" class="wiki-h2">2. 상세</h2><div class="wiki-content-box">${escapeHtml(c.details)}</div>
+        <h2 id="sec-backstory" class="wiki-h2">3. 백스토리</h2><div class="wiki-content-box">${escapeHtml(c.backstory)}</div>
+        <h2 id="sec-relations" class="wiki-h2">4. 관계</h2><div class="wiki-content-box">${escapeHtml(c.relations)}</div>
+        <h2 id="sec-references" class="wiki-h2">5. 참고문서</h2><div class="wiki-content-box">${escapeHtml(c.references)}</div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[match]));
+    }
+  </script>
+</body>
+</html>
